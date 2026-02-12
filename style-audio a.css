@@ -1,0 +1,118 @@
+:root {
+    --primary-purple: #8e44ad;
+    --light-purple: #f3e5f5;
+    --accent-blue: #3498db;
+    --deep-blue: #2980b9;
+    --bg-gray: #f8f9fa;
+    --text-dark: #2c3e50;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-gray);
+    margin: 0; padding: 0;
+    color: var(--text-dark);
+    padding-bottom: 100px; /* Space for fixed player */
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    box-shadow: var(--shadow);
+}
+
+header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+
+/* Grid Layout */
+.content-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+}
+
+/* Audio Box/Button */
+.audio-box {
+    background: var(--white);
+    border: 2px solid var(--light-purple);
+    border-radius: 12px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.audio-box:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-blue);
+    background-color: var(--light-purple);
+}
+
+.audio-box.active {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--deep-blue);
+}
+
+.box-id { font-weight: 900; font-size: 1.2rem; display: block; margin-bottom: 5px; }
+.box-title { font-size: 0.75rem; color: inherit; opacity: 0.8; }
+
+.audio-box.review-box {
+    background: #fff0f6;
+    border-color: #ff85c0;
+}
+
+/* Slide Menu (Sidebar) */
+#sidebar {
+    position: fixed; top: 0; left: -250px; width: 250px; height: 100%;
+    background: var(--white); z-index: 2000;
+    transition: 0.3s; box-shadow: var(--shadow);
+}
+
+#sidebar.active { left: 0; }
+
+.sidebar-header {
+    background: var(--primary-purple); color: white;
+    padding: 20px; font-weight: bold;
+}
+
+.sidebar-list { list-style: none; padding: 0; margin: 0; }
+.sidebar-list li {
+    padding: 15px 20px; border-bottom: 1px solid #eee;
+    cursor: pointer; font-weight: 600;
+}
+
+.sidebar-list li:hover { background: var(--light-purple); color: var(--primary-purple); }
+
+/* Fixed Bottom Player */
+#player-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: white; border-top: 3px solid var(--accent-blue);
+    padding: 15px 20px; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    z-index: 3000; box-sizing: border-box;
+}
+
+.player-info { flex: 1; max-width: 300px; }
+.now-playing-label { font-size: 0.6rem; text-transform: uppercase; color: var(--accent-blue); font-weight: bold; }
+#current-track-title { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.player-controls { flex: 2; text-align: center; }
+audio { width: 100%; max-width: 500px; height: 35px; }
+
+#menu-toggle {
+    position: absolute; left: 20px; top: 20px;
+    background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;
+}

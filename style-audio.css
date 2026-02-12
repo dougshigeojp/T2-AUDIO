@@ -1,0 +1,117 @@
+:root {
+    --primary-purple: #7b2cbf; /* Richer Purple */
+    --light-purple: #f3e5f5;
+    --accent-blue: #4895ef;
+    --deep-blue: #3f37c9;
+    --bg-gray: #f8f9fa;
+    --text-dark: #2c3e50;
+    --white: #ffffff;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-gray);
+    margin: 0; padding: 0;
+    color: var(--text-dark);
+    padding-bottom: 120px;
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
+    color: white; padding: 20px; text-align: center;
+    font-family: 'Montserrat', sans-serif; box-shadow: var(--shadow);
+}
+
+header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
+
+.content-container {
+    max-width: 1100px; margin: 25px auto; padding: 0 15px;
+}
+
+/* The Lesson Card */
+.lesson-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.lesson-card.review-card {
+    border-left: 6px solid #ff4d6d;
+    background: #fffafa;
+}
+
+.card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+}
+
+.lesson-id { font-weight: 900; font-size: 1.2rem; color: var(--primary-purple); }
+.lesson-title { font-size: 0.9rem; font-weight: 600; color: #666; }
+
+/* The Audio Buttons Grid inside each card */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.track-btn {
+    background: var(--light-purple);
+    border: 1px solid var(--primary-purple);
+    color: var(--primary-purple);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.track-btn:hover {
+    background: var(--primary-purple);
+    color: white;
+}
+
+.track-btn.active {
+    background: var(--accent-blue);
+    border-color: var(--deep-blue);
+    color: white;
+    box-shadow: 0 0 8px rgba(72, 149, 239, 0.5);
+}
+
+/* Sidebar & Player remain similar but with updated colors */
+#sidebar {
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+    background: var(--white); z-index: 2000; transition: 0.3s; box-shadow: var(--shadow);
+}
+#sidebar.active { left: 0; }
+.sidebar-header { background: var(--primary-purple); color: white; padding: 20px; font-weight: bold; }
+.sidebar-list li { padding: 15px 20px; border-bottom: 1px dotted #eee; cursor: pointer; }
+.sidebar-list li:hover { background: var(--light-purple); }
+
+#player-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: white; border-top: 4px solid var(--primary-purple);
+    padding: 15px; display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 3000;
+}
+#current-track-title { font-weight: bold; margin-bottom: 10px; color: var(--primary-purple); }
+audio { width: 100%; max-width: 600px; height: 40px; }
+
+#menu-toggle { position: absolute; left: 15px; top: 18px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+@media (min-width: 768px) {
+    #player-bar { flex-direction: row; justify-content: space-between; padding: 15px 40px; }
+    #current-track-title { margin-bottom: 0; }
+}

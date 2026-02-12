@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEENS 2 AUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-audio.css">
+</head>
+<body>
+
+    <header>
+        <button id="menu-toggle">☰</button>
+        <h1>TEENS 2 AUDIO</h1>
+    </header>
+
+    <nav id="sidebar">
+        <div class="sidebar-header">TEENS 2 - UNITS</div>
+        <ul class="sidebar-list" id="group-list"></ul>
+    </nav>
+
+    <main class="content-container">
+        <h2 id="current-group-label" style="margin-bottom: 20px; color: var(--deep-blue);"></h2>
+        <div id="lesson-container">
+            <!-- Cards will be injected here -->
+        </div>
+    </main>
+
+    <div id="player-bar">
+        <div id="current-track-title">Select an audio track...</div>
+        <audio id="main-audio-player" controls>
+            <source src="" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script src="audio-data.js"></script>
+    <script>
+        const audioPlayer = document.getElementById('main-audio-player');
+        const trackTitle = document.getElementById('current-track-title');
+
+        function init() {
+            renderSidebar();
+            loadGroup("R1");
+            setupMenu();
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('group-list');
+            list.innerHTML = Object.keys(AUDIO_DATABASE).map(key => `
+                <li onclick="loadGroup('${key}')">${AUDIO_DATABASE[key].label}</li>
+            `).join('');
+        }
+
+        function loadGroup(groupId) {
+            const groupData = AUDIO_DATABASE[groupId];
+            document.getElementById('current-group-label').innerText = groupData.label;
+            const container = document.getElementById('lesson-container');
+            
+            container.innerHTML = groupData.lessons.map(lesson => `
+                <div class="lesson-card ${lesson.isReview ? 'review-card' : ''}">
+                    <div class="card-header">
+                        <span class="lesson-id">${lesson.id}</span>
+                        <span class="lesson-title">${lesson.title}</span>
+                    </div>
+                    <div class="button-grid">
+                        ${lesson.tracks.map(track => `
+                            <button class="track-btn" 
+                                onclick="playAudio('${track.file}', '${lesson.id} - ${track.label}', this)">
+                                ${track.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('sidebar').classList.remove('active');
+            window.scrollTo(0,0);
+        }
+
+        window.playAudio = function(file, fullTitle, btnElement) {
+            // UI Update
+            document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Audio Update
+            trackTitle.innerText = fullTitle;
+            audioPlayer.src = `audio/${file}`;
+            audioPlayer.play();
+        };
+
+        function setupMenu() {
+            document.getElementById('menu-toggle').onclick = (e) => {
+                e.stopPropagation();
+                document.getElementById('sidebar').classList.toggle('active');
+            };
+            document.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('active');
+            });
+            document.getElementById('sidebar').onclick = (e) => e.stopPropagation();
+        }
+
+        init();
+    </script>
+</body>
+</html>

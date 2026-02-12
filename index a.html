@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEENS 2 AUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-audio.css">
+</head>
+<body>
+
+    <header>
+        <button id="menu-toggle">☰</button>
+        <h1>TEENS 2 AUDIO</h1>
+    </header>
+
+    <!-- Slide Menu -->
+    <nav id="sidebar">
+        <div class="sidebar-header">Unit Groups</div>
+        <ul class="sidebar-list" id="group-list">
+            <!-- Injected by JS -->
+        </ul>
+    </nav>
+
+    <main class="content-container">
+        <h2 id="current-group-label" style="color: var(--primary-purple);">R1 - L1 to L10</h2>
+        <div class="lesson-grid" id="audio-grid">
+            <!-- Boxes injected by JS -->
+        </div>
+    </main>
+
+    <!-- Fixed Player -->
+    <div id="player-bar">
+        <div class="player-info">
+            <div class="now-playing-label">Now Playing</div>
+            <div id="current-track-title">Select a lesson...</div>
+        </div>
+        <div class="player-controls">
+            <audio id="main-audio-player" controls>
+                <source src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+
+    <script src="audio-data.js"></script>
+    <script>
+        let currentGroup = "R1";
+        const audioPlayer = document.getElementById('main-audio-player');
+        const trackTitle = document.getElementById('current-track-title');
+
+        // Initialize App
+        function init() {
+            renderSidebar();
+            loadGroup("R1");
+            setupEventListeners();
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('group-list');
+            list.innerHTML = Object.keys(AUDIO_DATABASE).map(key => `
+                <li onclick="loadGroup('${key}')">${AUDIO_DATABASE[key].label}</li>
+            `).join('');
+        }
+
+        function loadGroup(groupId) {
+            currentGroup = groupId;
+            document.getElementById('current-group-label').innerText = AUDIO_DATABASE[groupId].label;
+            const grid = document.getElementById('audio-grid');
+            const data = AUDIO_DATABASE[groupId].lessons;
+
+            grid.innerHTML = data.map(item => `
+                <div class="audio-box ${item.isReview ? 'review-box' : ''}" 
+                     onclick="playAudio('${item.file}', '${item.id}: ${item.title}', this)">
+                    <span class="box-id">${item.id}</span>
+                    <span class="box-title">${item.title}</span>
+                </div>
+            `).join('');
+
+            // Close sidebar on mobile
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        window.playAudio = function(file, title, element) {
+            // Update Visuals
+            document.querySelectorAll('.audio-box').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+
+            // Update Player
+            trackTitle.innerText = title;
+            // Assumes MP3s are in a folder named 'audio'
+            audioPlayer.src = `audio/${file}`;
+            audioPlayer.play();
+        };
+
+        function setupEventListeners() {
+            document.getElementById('menu-toggle').onclick = () => {
+                document.getElementById('sidebar').classList.toggle('active');
+            };
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                const sidebar = document.getElementById('sidebar');
+                const toggle = document.getElementById('menu-toggle');
+                if (!sidebar.contains(e.target) && e.target !== toggle && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
