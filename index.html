@@ -51,31 +51,48 @@
             `).join('');
         }
 
-        function loadGroup(groupId) {
-            const groupData = AUDIO_DATABASE[groupId];
-            document.getElementById('current-group-label').innerText = groupData.label;
-            const container = document.getElementById('lesson-container');
-            
-            container.innerHTML = groupData.lessons.map(lesson => `
-                <div class="lesson-card ${lesson.isReview ? 'review-card' : ''}">
-                    <div class="card-header">
-                        <span class="lesson-id">${lesson.id}</span>
-                        <span class="lesson-title">${lesson.title}</span>
-                    </div>
-                    <div class="button-grid">
-                        ${lesson.tracks.map(track => `
-                            <button class="track-btn" 
-                                onclick="playAudio('${track.file}', '${lesson.id} - ${track.label}', this)">
-                                ${track.label}
-                            </button>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+function loadGroup(groupId) {
+    const groupData = AUDIO_DATABASE[groupId];
 
-            document.getElementById('sidebar').classList.remove('active');
-            window.scrollTo(0,0);
+    // 1. Check if this specific page requires a password
+    if (groupData.requiresPassword) {
+        const userInput = prompt("This section is password protected. Enter Code:");
+
+        if (userInput !== groupData.password) {
+            // If they click cancel or type it wrong
+            alert("Incorrect Password. Access Denied.");
+            return; // STOP HERE - Do not load the page
         }
+        
+        // If they got it right, the code continues below...
+        alert("Access Granted!");
+    }
+
+    // 2. Loading Logic (Runs if password is correct OR not required)
+    document.getElementById('current-group-label').innerText = groupData.label;
+    const container = document.getElementById('lesson-container');
+    
+    container.innerHTML = groupData.lessons.map(lesson => `
+        <div class="lesson-card ${lesson.isReview ? 'review-card' : ''}">
+            <div class="card-header">
+                <span class="lesson-id">${lesson.id}</span>
+                <span class="lesson-title">${lesson.title}</span>
+            </div>
+            <div class="button-grid">
+                ${lesson.tracks.map(track => `
+                    <button class="track-btn" 
+                        onclick="playAudio('${track.file}', '${lesson.id} - ${track.label}', this)">
+                        ${track.label}
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    // Close the menu and scroll to top
+    document.getElementById('sidebar').classList.remove('active');
+    window.scrollTo(0,0);
+}
 
         window.playAudio = function(file, fullTitle, btnElement) {
             // UI Update
@@ -85,7 +102,7 @@
             // Audio Update
             trackTitle.innerText = fullTitle;
             audioPlayer.src = `audio/${file}`;
-            audioPlayer.play();
+            // audioPlayer.play(); //commenting to disable auto play
         };
 
         function setupMenu() {
