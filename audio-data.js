@@ -193,8 +193,8 @@ const AUDIO_DATABASE = {
         ]
     },
     // Continue for R3, R4, R5, R6...
-        "R2": {
-        label: "R2 - L21 to L30",
+        "R3": {
+        label: "R3 - L21 to L30",
         lessons: [
             { 
                 id: "L21", 
