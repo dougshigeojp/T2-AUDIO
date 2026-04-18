@@ -562,14 +562,14 @@ const AUDIO_DATABASE = {
             }
         ]
     },
-    "WizMock": {
-        label: "WizMock 1 - 6",
+    "WM": {
+        label: "WM 1 - 6",
         requiresPassword: true,  // <--- Add this
         password: "wizhama", // <--- Add your password here
 
         lessons: [
             { 
-                id: "WizMock 1", 
+                id: "WM 1", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "67.mp3" },
@@ -577,7 +577,7 @@ const AUDIO_DATABASE = {
                 ]
             },
             { 
-                id: "WizMock 2", 
+                id: "WM 2", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "69.mp3" },
@@ -585,7 +585,7 @@ const AUDIO_DATABASE = {
                 ]
             },
             { 
-                id: "WizMock 3", 
+                id: "WM 3", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "71.mp3" },
@@ -593,7 +593,7 @@ const AUDIO_DATABASE = {
                 ]
             },
             { 
-                id: "WizMock 4", 
+                id: "WM 4", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "b60.mp3" },
@@ -601,7 +601,7 @@ const AUDIO_DATABASE = {
                 ]
             },
             { 
-                id: "WizMock 5", 
+                id: "WM 5", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "b62.mp3" },
@@ -609,7 +609,7 @@ const AUDIO_DATABASE = {
                 ]
             },
             { 
-                id: "WizMock 6", 
+                id: "WM 6", 
                 title: "Part 1 and 2", 
                 tracks: [
                     { label: "Look and Listen", file: "b64.mp3" },
