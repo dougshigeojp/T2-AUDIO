@@ -35,6 +35,11 @@
     <script>
         const audioPlayer = document.getElementById('main-audio-player');
         const trackTitle = document.getElementById('current-track-title');
+        
+        // Initialize Web Audio Context to bypass Chromium MP3 decoding flaws
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let currentBlobUrl = null;
 
         function init() {
             renderSidebar();
@@ -49,60 +54,107 @@
             `).join('');
         }
 
-function loadGroup(groupId) {
-    const groupData = AUDIO_DATABASE[groupId];
+        function loadGroup(groupId) {
+            const groupData = AUDIO_DATABASE[groupId];
 
-    // 1. Check if this specific page requires a password
-    if (groupData.requiresPassword) {
-        const userInput = prompt("This section is password protected. Enter Code:");
+            // Check password if required
+            if (groupData.requiresPassword) {
+                const userInput = prompt("This section is password protected. Enter Code:");
+                if (userInput !== groupData.password) {
+                    alert("Incorrect Password. Access Denied.");
+                    return;
+                }
+                alert("Access Granted!");
+            }
 
-        if (userInput !== groupData.password) {
-            // If they click cancel or type it wrong
-            alert("Incorrect Password. Access Denied.");
-            return; // STOP HERE - Do not load the page
+            // Render lesson cards
+            document.getElementById('current-group-label').innerText = groupData.label;
+            const container = document.getElementById('lesson-container');
+            
+            container.innerHTML = groupData.lessons.map(lesson => `
+                <div class="lesson-card ${lesson.isReview ? 'review-card' : ''}">
+                    <div class="card-header">
+                        <span class="lesson-id">${lesson.id}</span>
+                        <span class="lesson-title">${lesson.title}</span>
+                    </div>
+                    <div class="button-grid">
+                        ${lesson.tracks.map(track => `
+                            <button class="track-btn" 
+                                onclick="playAudio('${track.file}', '${lesson.id} - ${track.label}', this)">
+                                ${track.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('sidebar').classList.remove('active');
+            window.scrollTo(0,0);
         }
-        
-        // If they got it right, the code continues below...
-        alert("Access Granted!");
-    }
 
-    // 2. Loading Logic (Runs if password is correct OR not required)
-    document.getElementById('current-group-label').innerText = groupData.label;
-    const container = document.getElementById('lesson-container');
-    
-    container.innerHTML = groupData.lessons.map(lesson => `
-        <div class="lesson-card ${lesson.isReview ? 'review-card' : ''}">
-            <div class="card-header">
-                <span class="lesson-id">${lesson.id}</span>
-                <span class="lesson-title">${lesson.title}</span>
-            </div>
-            <div class="button-grid">
-                ${lesson.tracks.map(track => `
-                    <button class="track-btn" 
-                        onclick="playAudio('${track.file}', '${lesson.id} - ${track.label}', this)">
-                        ${track.label}
-                    </button>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
+        // Helper function: Converts raw decoded audio into a lossless playable stream
+        function audioBufferToWav(buffer) {
+            let numChannels = buffer.numberOfChannels,
+                sampleRate = buffer.sampleRate,
+                format = 1, // PCM
+                bitDepth = 16,
+                bytesPerSample = bitDepth / 8,
+                blockAlign = numChannels * bytesPerSample,
+                wavDataByteLength = buffer.length * blockAlign,
+                headerByteLength = 44,
+                totalLength = headerByteLength + wavDataByteLength,
+                waveData = new Uint8Array(totalLength),
+                view = new DataView(waveData.buffer);
 
-    // Close the menu and scroll to top
-    document.getElementById('sidebar').classList.remove('active');
-    window.scrollTo(0,0);
-}
+            function writeString(offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
 
-        window.playAudio = function(file, fullTitle, btnElement) {
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + wavDataByteLength, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, format, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * blockAlign, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitDepth, true);
+            writeString(36, 'data');
+            view.setUint32(40, wavDataByteLength, true);
+
+            let channels = [];
+            for (let i = 0; i < numChannels; i++) {
+                channels.push(buffer.getChannelData(i));
+            }
+
+            let offset = 44;
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numChannels; channel++) {
+                    let sample = channels[channel][i];
+                    sample = Math.max(-1, Math.min(1, sample));
+                    sample = (sample < 0 ? sample * 32768 : sample * 32767) | 0;
+                    view.setInt16(offset, sample, true);
+                    offset += 2;
+                }
+            }
+            return new Blob([waveData], { type: 'audio/wav' });
+        }
+
+        // Play audio with full pauses preserved
+window.playAudio = function(file, fullTitle, btnElement) {
             // UI Update
             document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
 
             // Audio Update
             trackTitle.innerText = fullTitle;
-            audioPlayer.src = `audio/${file}?v=${Date.now()}`;
-            // audioPlayer.play(); //commenting to disable auto play
+            audioPlayer.src = `audio/${file}`;
+            audioPlayer.play();
         };
-
         function setupMenu() {
             document.getElementById('menu-toggle').onclick = (e) => {
                 e.stopPropagation();
