@@ -28,9 +28,7 @@
 
     <div id="player-bar">
         <div id="current-track-title">Select an audio track...</div>
-        <audio id="main-audio-player" controls>
-            <source src="" type="audio/mpeg">
-        </audio>
+        <audio id="main-audio-player" controls preload="auto"></audio>
     </div>
 
     <script src="audio-data.js"></script>
@@ -101,7 +99,7 @@ function loadGroup(groupId) {
 
             // Audio Update
             trackTitle.innerText = fullTitle;
-            audioPlayer.src = `audio/${file}`;
+            audioPlayer.src = `audio/${file}?v=${Date.now()}`;
             // audioPlayer.play(); //commenting to disable auto play
         };
 
