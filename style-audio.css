@@ -18,9 +18,15 @@ body {
 }
 
 header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
-    color: white; padding: 20px; text-align: center;
-    font-family: 'Montserrat', sans-serif; box-shadow: var(--shadow);
+    color: white; 
+    padding: 20px; 
+    text-align: center;
+    font-family: 'Montserrat', sans-serif; 
+    box-shadow: var(--shadow);
 }
 
 header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
@@ -101,17 +107,63 @@ header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
 .sidebar-list li:hover { background: var(--light-purple); }
 
 #player-bar {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    background: white; border-top: 4px solid var(--primary-purple);
-    padding: 15px; display: flex; flex-direction: column; align-items: center;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 3000;
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%;
+    box-sizing: border-box; /* Keeps player within screen bounds */
+    background: white; 
+    border-top: 4px solid var(--primary-purple);
+    padding: 12px 20px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1); 
+    z-index: 3000;
 }
-#current-track-title { font-weight: bold; margin-bottom: 10px; color: var(--primary-purple); }
-audio { width: 100%; max-width: 600px; height: 40px; }
 
-#menu-toggle { position: absolute; left: 15px; top: 18px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+#current-track-title { 
+    font-weight: bold; 
+    color: var(--primary-purple); 
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+audio { 
+    width: 100%; 
+    max-width: 600px; 
+    height: 40px; 
+}
+
+#menu-toggle { 
+    position: absolute; 
+    left: 15px; 
+    top: 18px; 
+    background: none; 
+    border: none; 
+    color: white; 
+    font-size: 1.5rem; 
+    cursor: pointer; 
+}
 
 @media (min-width: 768px) {
-    #player-bar { flex-direction: row; justify-content: space-between; padding: 15px 40px; }
-    #current-track-title { margin-bottom: 0; }
+    #player-bar { 
+        flex-direction: row; 
+        justify-content: space-between; 
+        padding: 12px 30px; 
+        gap: 20px;
+    }
+    #current-track-title { 
+        text-align: left; 
+        max-width: 45%; 
+    }
+    audio { 
+        width: 50%; 
+        max-width: 550px; 
+        flex-shrink: 0; 
+    }
 }
